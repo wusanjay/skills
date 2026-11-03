@@ -1,0 +1,4 @@
+interface:
+  display_name: "Technical Solution Design"
+  short_description: "Design implementation-ready technical solutions"
+  default_prompt: "Use $technical-solution-design to derive an implementation-ready technical solution from the project inputs."

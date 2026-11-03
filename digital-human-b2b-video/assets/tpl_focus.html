@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<!-- 动效模板 A「界面聚焦」：产品截图 + 缓动运镜 + 聚焦框 -->
+<html><head><meta charset="utf-8"><style>
+  * { margin:0; padding:0; }
+  body { width:1920px; height:1080px; overflow:hidden; background:#171210; }
+  #stage { position:absolute; width:1920px; height:1080px; overflow:hidden; }
+  #shot { position:absolute; width:1920px; height:1080px; transform-origin:0 0; }
+  #dim { position:absolute; inset:0; background:#000; opacity:0; pointer-events:none; }
+  .focus { position:absolute; border:4px solid #e8b98a; border-radius:14px; opacity:0;
+           box-shadow:0 0 0 2000px rgba(10,6,4,.45); }
+  .cap { position:absolute; bottom:70px; left:0; right:0; text-align:center;
+         font-family:"PingFang SC","Heiti SC",sans-serif; font-size:44px; font-weight:600;
+         color:#fff; text-shadow:0 2px 12px rgba(0,0,0,.8); opacity:0; }
+</style></head><body>
+<div id="stage">
+  <img id="shot" src="SHOT_IMG">
+  <div id="dim"></div>
+  <div class="focus" id="f1"></div>
+  <div class="focus" id="f2"></div>
+  <div class="cap" id="c1">真实引擎生成 · 每个恢复节点独立出图</div>
+  <div class="cap" id="c2">AI 模拟示意 · 保守呈现不做承诺</div>
+</div>
+<script>
+const DUR = 12; window.DUR = DUR;
+const img = "SHOT_IMG";
+const shot = document.getElementById('shot');
+shot.src = img;
+// 缓动
+const ease = t => t<.5 ? 2*t*t : 1-Math.pow(-2*t+2,2)/2;        // easeInOutQuad
+const eo   = t => 1-Math.pow(1-t,3);                             // easeOutCubic
+const lerp = (a,b,k) => a+(b-a)*k;
+const clamp01 = v => Math.max(0,Math.min(1,v));
+const win = (t,a,b) => clamp01((t-a)/(b-a));                     // 0→1 线性窗口
+// 相机状态：{cx,cy} 视野中心, zoom
+function cam(t){
+  if (t < 3)  { const k = ease(win(t,0,3));   return { cx:960,  cy:540, zoom: lerp(1.0, 1.08, k), f:null }; }
+  if (t < 6.5){ const k = ease(win(t,3,4.0)); return { cx:725, cy:390, zoom: 1.75, f:'f1' }; }        // 左侧患者列表
+  if (t < 10) { const k = ease(win(t,6.5,7.5)); return { cx:1250, cy:560, zoom: 1.6, f:'f2' }; }        // 右侧深色舞台
+  { const k = ease(win(t,10,11)); return { cx:960, cy:540, zoom: lerp(1.6, 1.02, k), f:null }; }
+}
+const FOCl = { f1: { x:560, y:90, w:330, h:600 }, f2: { x:850, y:300, w:790, h:600 } };
+window.render = t => {
+  const c = cam(t);
+  const vw = 1920 / c.zoom, vh = 1080 / c.zoom;
+  const ox = Math.max(0, Math.min(1920 - vw, c.cx - vw/2));
+  const oy = Math.max(0, Math.min(1080 - vh, c.cy - vh/2));
+  shot.style.transform = `translate(${-ox}px,${-oy}px) scale(${c.zoom})`;
+  // 聚焦框
+  for (const id of ['f1','f2']) {
+    const el = document.getElementById(id);
+    if (c.f === id) {
+      const r = FOCl[id], k = eo(win(t, id==='f1'?3.2:6.7, id==='f1'?3.8:7.3));
+      el.style.opacity = k;
+      const pad = lerp(60, 0, k);
+      el.style.left=(r.x-pad)+'px'; el.style.top=(r.y-pad)+'px';
+      el.style.width=(r.w+2*pad)+'px'; el.style.height=(r.h+2*pad)+'px';
+    } else el.style.opacity = 0;
+  }
+  // 说明字幕
+  const c1 = document.getElementById('c1'), c2 = document.getElementById('c2');
+  c1.style.opacity = Math.max(win(t,3.4,3.9) - win(t,6.2,6.6), 0);
+  c2.style.opacity = Math.max(win(t,6.9,7.4) - win(t,10.2,10.6), 0);
+  // 无聚焦时轻微压暗取消
+  document.getElementById('dim').style.opacity = c.f ? 0 : 0;
+};
+window.render(0);
+</script></body></html>

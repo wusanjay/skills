@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<!-- 动效模板 B「数字滚动」：深色品牌底 + 三组数据卡依次弹入，数字滚动 -->
+<html><head><meta charset="utf-8"><style>
+  * { margin:0; padding:0; }
+  body { width:1920px; height:1080px; overflow:hidden; background:#171210;
+         font-family:"PingFang SC","Heiti SC",sans-serif; }
+  .cards { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; gap:70px; }
+  .card { width:480px; height:560px; border-radius:24px; background:#241a15;
+          border:1px solid #3d2b22; display:flex; flex-direction:column;
+          align-items:center; justify-content:center; opacity:0; }
+  .num { font-size:150px; font-weight:800; color:#e8b98a; line-height:1; letter-spacing:2px; }
+  .unit { font-size:44px; font-weight:600; color:#e8b98a; margin-left:6px; }
+  .lab { margin-top:36px; font-size:40px; font-weight:600; color:#f3e9e2; }
+  .sub { margin-top:14px; font-size:26px; color:#9a867a; }
+  .badge { position:absolute; top:0; left:50%; transform:translateX(-50%); margin-top:90px;
+           font-size:38px; font-weight:700; color:#f3e9e2; letter-spacing:6px; opacity:0; }
+</style></head><body>
+<div class="badge">悦见 AI · 恢复效果模拟平台</div>
+<div class="cards">
+  <div class="card" id="c0"><div><span class="num" id="n0">0</span><span class="unit">个</span></div>
+    <div class="lab">术式覆盖</div><div class="sub">手术 / 注射 / 光电主力品类</div></div>
+  <div class="card" id="c1"><div><span class="num" id="n1">0</span><span class="unit">秒</span></div>
+    <div class="lab">生成一张模拟图</div><div class="sub">真实引擎 · 即刻出图</div></div>
+  <div class="card" id="c2"><div><span class="num" id="n2">0</span><span class="unit">天</span></div>
+    <div class="lab">恢复时间线</div><div class="sub">第 1 天到第 90 天全周期</div></div>
+</div>
+<script>
+const DUR = 8; window.DUR = DUR;
+const eo = t => 1 - Math.pow(1 - t, 3);                 // easeOutCubic
+const back = t => { const c = 1.70158; return 1 + (c+1)*Math.pow(t-1,3) + c*Math.pow(t-1,2); }; // easeOutBack
+const clamp01 = v => Math.max(0, Math.min(1, v));
+const win = (t,a,b) => clamp01((t-a)/(b-a));
+const lerp = (a,b,k) => a + (b-a)*k;
+const cards = [
+  { el:'c0', n:'n0', target:71,  in:0.4 },
+  { el:'c1', n:'n1', target:30,  in:1.9 },
+  { el:'c2', n:'n2', target:30,  in:3.4 },
+];
+window.render = t => {
+  const badge = document.querySelector('.badge');
+  badge.style.opacity = eo(win(t, 0.1, 0.6));
+  for (let i = 0; i < cards.length; i++) {
+    const c = cards[i], el = document.getElementById(c.el);
+    const k = win(t, c.in, c.in + 0.55);                // 入场
+    el.style.opacity = k;
+    const s = lerp(0.82, 1, back(k));
+    el.style.transform = `translateY(${lerp(40, 0, eo(k))}px) scale(${s})`;
+    const roll = eo(win(t, c.in + 0.15, c.in + 1.15));  // 数字滚动
+    document.getElementById(c.n).textContent = Math.round(lerp(0, c.target, roll));
+    // 末段整体呼吸微亮，保持画面不死板
+    el.style.borderColor = `rgba(232,185,138,${0.15 + 0.25*Math.abs(Math.sin((t-i*0.5)*1.2))})`;
+  }
+};
+window.render(0);
+</script></body></html>
