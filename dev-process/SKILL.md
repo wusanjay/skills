@@ -5,7 +5,7 @@ description: Development execution discipline for any coding task in a repositor
 
 # 开发过程纪律（dev-process）
 
-本 skill 把《开发过程经验蒸馏》固化为执行协议：经验库（`../开发过程经验蒸馏.md`）回答"为什么"，本 skill 回答"现在做什么、怎么算做完"。每条规则标注来源（源 §x.x），badcase 证据查经验库 §7。
+本 skill 把《开发过程经验蒸馏》固化为执行协议：经验库（`references/开发过程经验蒸馏.md`）回答"为什么"，本 skill 回答"现在做什么、怎么算做完"。每条规则标注来源（源 §x.x），badcase 证据查经验库 §7。
 
 ## 1. 目的与边界
 

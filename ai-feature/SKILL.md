@@ -5,7 +5,7 @@ description: Hard invariants for building or modifying any feature whose call ch
 
 # AI 功能纪律（ai-feature）
 
-dev-process 阶段 0.5 的触发加载项。凡模型参与的链路，以下不变量对正式能力、联调工具、"临时"功能一视同仁——"临时"是范围属性，不是纪律豁免（源 §2.1）。badcase 证据查 `../开发过程经验蒸馏.md` §7。
+dev-process 阶段 0.5 的触发加载项。凡模型参与的链路，以下不变量对正式能力、联调工具、"临时"功能一视同仁——"临时"是范围属性，不是纪律豁免（源 §2.1）。badcase 证据查 `../dev-process/references/开发过程经验蒸馏.md` §7。
 
 ## 1. 目的与边界
 
